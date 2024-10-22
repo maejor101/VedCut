@@ -50,7 +50,8 @@ export async function POST(req) {
   //end -> 00:01:45
 
   //duration = end - start 00:01:45 - 00:01:00 -> 00:00:45
-  duration = timeDifference(start, end);
+  const duration = timeDifference(start, end);
+
   Ffmpeg(filePath)
     .setStartTime("00:01:00")
     .setDuration(duration)
