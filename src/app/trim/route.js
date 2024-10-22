@@ -3,10 +3,33 @@ import { promises as fs } from "fs";
 import path from "path";
 import Ffmpeg from "fluent-ffmpeg";
 
+const timeToSeconds = (time) => {
+  const [hours, minutes, seconds] = time.split(":").map(Number);
+  return hours * 3600 + minutes * 60 + seconds;
+};
+
+const timeDifference = (startTime, endTime) => {
+  let diffInSeconds = timeToSeconds(endTime) - timeToSeconds(startTime);
+
+  if (diffInSeconds < 0) {
+    diffInSeconds += 24 * 3600;
+  }
+
+  const hours = Math.floor(diffInSeconds / 3600);
+  const minutes = Math.floor((diffInSeconds % 3600) / 60);
+  const seconds = diffInSeconds % 60;
+
+  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+    2,
+    "0"
+  )}:${String(seconds).padStart(2, "0")}`;
+};
+
 export async function POST(req) {
   const data = await req.formData();
   const file = data.get("file");
-
+  const start = data.get("start");
+  const end = data.get("end");
   if (!file) {
     return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
   }
@@ -27,10 +50,10 @@ export async function POST(req) {
   //end -> 00:01:45
 
   //duration = end - start 00:01:45 - 00:01:00 -> 00:00:45
-
+  duration = timeDifference(start, end);
   Ffmpeg(filePath)
     .setStartTime("00:01:00")
-    .setDuration("00:00:30")
+    .setDuration(duration)
     .output("new.mp4")
     .on("end", async () => {
       console.log("Done processing...");
