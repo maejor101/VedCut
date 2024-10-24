@@ -1,3 +1,6 @@
+import { promises as fs } from "fs";
+import path from "path";
+
 export const timeToSeconds = (time) => {
   const [hours, minutes, seconds] = time.split(":").map(Number);
   return hours * 3600 + minutes * 60 + seconds;
@@ -18,4 +21,9 @@ export const timeDifference = (startTime, endTime) => {
     2,
     "0"
   )}:${String(seconds).padStart(2, "0")}`;
+};
+
+export const createFolder = async (folderName) => {
+  const uploadDir = path.join(process.cwd(), folderName);
+  return await fs.mkdir(uploadDir, { recursive: true });
 };

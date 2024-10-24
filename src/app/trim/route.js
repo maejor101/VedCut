@@ -2,25 +2,25 @@ import { NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
 import Ffmpeg from "fluent-ffmpeg";
-import { timeDifference } from "@/utils/helpers";
+import { createFolder, timeDifference } from "@/utils/helpers";
 
 export async function POST(req) {
   const data = await req.formData();
   const file = data.get("file");
   const start = data.get("start");
   const end = data.get("end");
+  //More validation is needed
   if (!file) {
     return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
   }
-
-  const uploadDir = path.join(process.cwd(), "uploads");
-  await fs.mkdir(uploadDir, { recursive: true });
-  // const newFilename =
-  console.log(file);
+  //Create the uploads folder
+  const uploadDir = await createFolder("uploads");
+  //Write the file into the uploads dir
   const filePath = path.join(uploadDir, file.name);
   const arrayBuffer = await file.arrayBuffer();
   await fs.writeFile(filePath, Buffer.from(arrayBuffer));
 
+  //Calculate the time diff
   const duration = timeDifference(start, end);
 
   try {
@@ -39,7 +39,7 @@ export async function POST(req) {
         })
         .run();
     });
-    //At this point, the video would have successfully been process, ready for download
+    //At this point, the video would have successfully been processed, ready for download
     const donwloadFile = await fs.readFile("new.mp4");
     return new Response(donwloadFile, {
       headers: {
