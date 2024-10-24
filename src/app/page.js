@@ -4,6 +4,7 @@ import { useState } from "react";
 
 export default function UploadPage() {
   const [file, setFile] = useState(null);
+  const [videoUrl, setVideoUrl] = useState(null);
 
   const [times, setTimes] = useState({
     start: "",
@@ -21,11 +22,16 @@ export default function UploadPage() {
   };
 
   const handleFileChange = (e) => {
+    const url = URL.createObjectURL(e.target.files[0]);
+
+    setVideoUrl(url);
+
     setFile(e.target.files[0]);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    e.target.disabled = true;
     const formData = new FormData();
     formData.append("file", file);
     formData.append("start", times.start);
@@ -49,20 +55,29 @@ export default function UploadPage() {
     } else {
       console.log("File upload failed");
     }
+    e.target.disabled = false;
   };
 
   return (
-    <div className="container flex flex-col mx-auto justify-center items-center">
+    <div className="sm:w-2/3 w-full px-3 mx-auto flex flex-col justify-center items-center">
       <h1 className="my-5">Upload a file</h1>
-      <form onSubmit={handleSubmit}>
+      {videoUrl && (
+        <video className="w-full mb-5" height="240" preload="none">
+          <source src={videoUrl} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      )}
+      <form className="w-full">
         <input
+          class="block w-full text-lg text-gray-900 border border-gray-300  cursor-pointer bg-white dark:text-gray-400 focus:outline-none  dark:placeholder-gray-400"
+          id="file"
+          name="file"
           type="file"
           onChange={handleFileChange}
-          className="block w-full p-4 border"
         />
-        <div className="my-3 flex flex-row gap-x-3">
+        <div className="flex flex-col gap-x-3 mt-2">
           <input
-            className="text-xs px-3 text-black p-2 outline-none border-none"
+            className="text-sm text-black p-3 outline-none border-none"
             type="text"
             name="start"
             id="start"
@@ -75,10 +90,13 @@ export default function UploadPage() {
             onChange={handleInput}
             id="end"
             placeholder="HH:MM:SS"
-            className="text-xs px-3 text-black p-2 outline-none border-none"
+            className="text-sm text-black p-3 my-2 outline-none border-none"
           />
         </div>
-        <button type="submit" className="w-full bg-yellow-600 p-3 my-2">
+        <button
+          onClick={handleSubmit}
+          className="w-full bg-yellow-600 p-2 disabled:bg-gray-300 disabled:text-gray-500 cursor-not-allowed"
+        >
           Upload
         </button>
       </form>
