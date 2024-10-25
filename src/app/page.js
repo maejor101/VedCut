@@ -1,4 +1,3 @@
-// app/upload/page.jsx (or /pages/upload.js if not using the app directory)
 "use client";
 import { useState } from "react";
 
@@ -22,8 +21,8 @@ export default function UploadPage() {
   };
 
   const handleFileChange = (e) => {
+    console.log(e.target.files);
     const url = URL.createObjectURL(e.target.files[0]);
-
     setVideoUrl(url);
 
     setFile(e.target.files[0]);
@@ -61,15 +60,37 @@ export default function UploadPage() {
   return (
     <div className="sm:w-2/3 w-full px-3 mx-auto flex flex-col justify-center items-center">
       <h1 className="my-5">Upload a file</h1>
+      {!videoUrl && (
+        <label
+          htmlFor="file"
+          className="bg-slate-600/30 border h-[240px] w-full flex justify-center items-center my-3 shadow"
+        >
+          <p>Click to select video</p>
+        </label>
+      )}
       {videoUrl && (
-        <video className="w-full mb-5" height="240" preload="none">
-          <source src={videoUrl} type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
+        <div className="w-full">
+          <video
+            id="video"
+            name="video"
+            className="w-full my-2"
+            height="240"
+            preload="metadata"
+          >
+            <source src={videoUrl} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+          <label
+            htmlFor="file"
+            className="bg-none text-black border-none outline-none"
+          >
+            Click here to change video
+          </label>{" "}
+        </div>
       )}
       <form className="w-full">
         <input
-          className="block w-full text-lg text-gray-900 border border-gray-300  cursor-pointer bg-white dark:text-gray-400 focus:outline-none  dark:placeholder-gray-400"
+          className=" w-full text-lg text-gray-900 border border-gray-300  cursor-pointer bg-white dark:text-gray-400 focus:outline-none  dark:placeholder-gray-400 hidden"
           id="file"
           name="file"
           type="file"
@@ -77,7 +98,7 @@ export default function UploadPage() {
         />
         <div className="flex flex-col gap-x-3 mt-2">
           <input
-            className="text-sm text-black p-3 outline-none border-none"
+            className="border text-sm border-slate-400 text-black p-3 outline-none"
             type="text"
             name="start"
             id="start"
@@ -90,14 +111,14 @@ export default function UploadPage() {
             onChange={handleInput}
             id="end"
             placeholder="HH:MM:SS"
-            className="text-sm text-black p-3 my-2 outline-none border-none"
+            className="text-sm border text-black p-3 my-2 outline-none border-slate-400"
           />
         </div>
         <button
           onClick={handleSubmit}
-          className="w-full bg-yellow-600 p-2 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
+          className="w-full bg-black text-white p-2 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
         >
-          Upload
+          Trim
         </button>
       </form>
     </div>

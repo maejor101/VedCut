@@ -25,5 +25,6 @@ export const timeDifference = (startTime, endTime) => {
 
 export const createFolder = async (folderName) => {
   const uploadDir = path.join(process.cwd(), folderName);
-  return await fs.mkdir(uploadDir, { recursive: true });
+  await fs.mkdir(uploadDir, { recursive: true });
+  return uploadDir;
 };
