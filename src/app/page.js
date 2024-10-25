@@ -69,7 +69,7 @@ export default function UploadPage() {
       )}
       <form className="w-full">
         <input
-          class="block w-full text-lg text-gray-900 border border-gray-300  cursor-pointer bg-white dark:text-gray-400 focus:outline-none  dark:placeholder-gray-400"
+          className="block w-full text-lg text-gray-900 border border-gray-300  cursor-pointer bg-white dark:text-gray-400 focus:outline-none  dark:placeholder-gray-400"
           id="file"
           name="file"
           type="file"
@@ -95,7 +95,7 @@ export default function UploadPage() {
         </div>
         <button
           onClick={handleSubmit}
-          className="w-full bg-yellow-600 p-2 disabled:bg-gray-300 disabled:text-gray-500 cursor-not-allowed"
+          className="w-full bg-yellow-600 p-2 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
         >
           Upload
         </button>
