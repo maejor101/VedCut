@@ -58,7 +58,7 @@ export default function UploadPage() {
   };
 
   return (
-    <div className="sm:w-2/3 w-full px-3 mx-auto flex flex-col justify-center items-center">
+    <div className="sm:w-1/3 w-full px-3 mx-auto flex flex-col ">
       <h1 className="my-5">Upload a file</h1>
       {!videoUrl && (
         <label
@@ -82,7 +82,7 @@ export default function UploadPage() {
           </video>
           <label
             htmlFor="file"
-            className="bg-none text-black border-none outline-none"
+            className="bg-none underline text-xs text-black border-none outline-none"
           >
             Click here to change video
           </label>{" "}
