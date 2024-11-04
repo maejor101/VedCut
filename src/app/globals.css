@@ -11,6 +11,26 @@
 }
 
 
+/* Define light and dark mode styles */
+.light {
+  background-color: #FAFAFA;
+  color: #000000;
+}
+
+.dark {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+/* Adjust Profile-section based on the mode */
+.Profile-section.light {
+  background-color: #ffffff;
+}
+
+.Profile-section.dark {
+  background-color: #333333;
+}
+
 
 
 
@@ -110,7 +130,6 @@ label {
   flex-direction: row;
   align-items: center;
   column-gap: 20px;
-  background-color: #ffffff;
 }
 
 
@@ -340,7 +359,6 @@ h1 {
 }
 
 .inner-content h2 {
-  background-color: #ffffff;
   font-weight: 600;
   font-size: 1rem;
 }
