@@ -1,30 +1,129 @@
 "use client";
-import Image from 'next/image';
-import { useEffect, useState } from 'react';
-import logo1 from '../app/Screens/assets/logo1.png'; 
+import { useState } from "react";
 
-export default function Splash() {
-  const [isLoading, setIsLoading] = useState(true);
+export default function UploadPage() {
+  const [file, setFile] = useState(null);
+  const [videoUrl, setVideoUrl] = useState(null);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 3000); 
+  const [times, setTimes] = useState({
+    start: "",
+    end: "",
+  });
 
-    return () => clearTimeout(timer);
-  }, []);
+  const handleInput = (event) => {
+    const value = event.target.value;
+    const name = event.target.name;
 
-  if (!isLoading) return null; 
+    setTimes({
+      ...times,
+      [name]: value,
+    });
+  };
+
+  const handleFileChange = (e) => {
+    const url = URL.createObjectURL(e.target.files[0]);
+    setVideoUrl(url);
+
+    setFile(e.target.files[0]);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    e.target.disabled = true;
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("start", times.start);
+    formData.append("end", times.end);
+
+    const response = await fetch("/api/trim", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (response.ok) {
+      const blob = await response.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = "trimmed-video.mp4";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(downloadUrl);
+    } else {
+      console.log("File upload failed");
+    }
+    e.target.disabled = false;
+  };
 
   return (
-    <main className="main-container">
-      <Image
-        src={logo1} 
-        alt="App Logo"
-        width={200}
-        height={200}
-        priority 
-      />
-    </main>
+    <div className="sm:w-1/3 w-full px-3 mx-auto flex flex-col ">
+      <h1 className="my-5">Upload a file</h1>
+      {!videoUrl && (
+        <label
+          htmlFor="file"
+          className="bg-slate-600/30 border h-[240px] w-full flex justify-center items-center my-3 shadow"
+        >
+          <p>Click to select video</p>
+        </label>
+      )}
+      {videoUrl && (
+        <div className="w-full">
+          <video
+            id="video"
+            name="video"
+            className="w-full my-2"
+            height="240"
+            key={videoUrl}
+            preload="metadata"
+            controls
+          >
+            <source src={videoUrl} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+          <label
+            htmlFor="file"
+            className="bg-none underline text-xs` text-black border-none outline-none"
+          >
+            Click here to change video
+          </label>{" "}
+        </div>
+      )}
+      <form className="w-full">
+        <input
+          className=" w-full text-lg text-gray-900 border border-gray-300  cursor-pointer bg-white dark:text-gray-400 focus:outline-none  dark:placeholder-gray-400 hidden"
+          id="file"
+          accept="video/mp4, video/avi, video/mov"
+          name="file"
+          type="file"
+          onChange={handleFileChange}
+        />
+        <div className="flex flex-row w-full space-x-1">
+          <input
+            className="border w-1/2 text-sm border-slate-400 text-black p-3 py-2 outline-none"
+            type="text"
+            name="start"
+            id="start"
+            placeholder="HH:MM:SS"
+            onChange={handleInput}
+          />
+          <input
+            type="text"
+            name="end"
+            onChange={handleInput}
+            id="end"
+            placeholder="HH:MM:SS"
+            className="w-1/2 text-sm border text-black p-3 py-2  outline-none border-slate-400"
+          />
+        </div>
+        <div></div>
+        <button
+          onClick={handleSubmit}
+          className=" bg-black text-white p-2 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed absolute bottom-6 max-w-full"
+        >
+          Save
+        </button>
+      </form>
+    </div>
   );
 }
